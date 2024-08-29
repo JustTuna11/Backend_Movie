@@ -31,7 +31,7 @@ namespace MovieManagement.Controllers
         private readonly IMovieService _movieService;
         private readonly IFoodService _foodService;
         private readonly IBillService _billService;
-        private readonly IVNPayService _vnpayService;
+
         public UserController(
             ICinemaService iCinemaService,
             ISeatService seatService,
@@ -42,8 +42,8 @@ namespace MovieManagement.Controllers
             IPromotionService promotionService,
             IMovieService movieService,
             IFoodService foodService,
-            IBillService billService,
-            IVNPayService vnpayService
+            IBillService billService
+
             )
         {
             _iCinemaService = iCinemaService;
@@ -56,7 +56,7 @@ namespace MovieManagement.Controllers
             _movieService = movieService;
             _foodService = foodService;
             _billService = billService;
-            _vnpayService = vnpayService;
+
         }
         [HttpGet("GetListCinema")]
         [Authorize(Roles = "Admin, Manager, Staff, User")]
@@ -129,23 +129,6 @@ namespace MovieManagement.Controllers
         public async Task<IActionResult> CreateBill(Request_CreateBill request)
         {
             return Ok(await _billService.CreateBill(request));
-        }
-
-        [HttpGet]
-        [Route("/Vnpay/return")]
-        public async Task<IActionResult> Return()
-        {
-            var vnpayData = HttpContext.Request.Query;
-
-            return Ok(await _vnpayService.VNPayReturn(vnpayData));
-        }
-        [HttpPost]
-        [Route("/Vnpay/CreatePaymentUrl")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> CreatePaymentUrl(int billId)
-        {
-            int id = int.Parse(HttpContext.User.FindFirst("Id").Value);
-            return Ok(await _vnpayService.CreatePaymentUrl(billId, HttpContext, id));
         }
         [HttpGet("GetAllMovieTypes")]
         public async Task<IActionResult> GetAllMovieTypes(int pageSize = 10, int pageNumber = 1)
